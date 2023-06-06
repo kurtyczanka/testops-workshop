@@ -63,7 +63,7 @@ pipeline {
             }
         }
         stage('Run tests') {
-            agent{
+            agent {
                 docker {
                     image 'cypress/included:12.2.0'
                     args '--network host --entrypoint=\'\''
@@ -72,6 +72,7 @@ pipeline {
             steps {
                 dir('pipeline_ex/'){
                     script {
+                        sh 'npm install'
                         try {
                             sh 'CYPRESS_BASE_URL=localhost:3000 cypress run'
                         }
