@@ -43,7 +43,26 @@ pipeline {
         DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
     }
     stages {
-        stage('Initial stage') {
+        stage('Build application') {
+            steps {
+                dir('docker_introduction/docker-compose/') {
+                    script{
+                        sh("docker-compose build --build-arg DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}")
+                     }
+                }
+            }
+        }
+        stage('Lunch application') {
+            steps {
+                dir('docker_introduction/docker-compose/') {
+                    script{
+                        sh("docker-compose up -d")
+                     }
+                }
+
+            }
+        }
+        stage('Run tests') {
             steps {
                 script {
                     sh("echo 'hello'")
@@ -51,6 +70,15 @@ pipeline {
                 }
 
             }
+        }
+    }
+    post {
+        always {
+                dir('docker_introduction/docker-compose/') {
+                    script{
+                        sh("docker-compose down")
+                     }
+                }
         }
     }
 }
